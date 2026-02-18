@@ -20,3 +20,8 @@ spring:
 
 server:
   port: 4000
+
+scalar:
+  enabled: true
+  url: /openapi.yaml
+  path: /docs

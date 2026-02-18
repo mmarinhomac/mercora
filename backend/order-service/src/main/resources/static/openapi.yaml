@@ -1,0 +1,92 @@
+openapi: 3.0.3
+info:
+  title: Order Service API
+  description: API for managing orders
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:4000
+    description: Development server
+
+paths:
+  /orders:
+    get:
+      summary: Get all orders
+      operationId: getOrders
+      tags:
+        - Orders
+      responses:
+        "200":
+          description: List of orders retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponseDTO'
+
+    post:
+      summary: Create a new order
+      operationId: createOrder
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequestDTO'
+      responses:
+        "200":
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponseDTO'
+        "400":
+          description: Invalid order data
+
+components:
+  schemas:
+    OrderRequestDTO:
+      type: object
+      required:
+        - customerId
+        - status
+        - total
+      properties:
+        customerId:
+          type: string
+          description: Customer identifier
+          example: "CUST123"
+        status:
+          type: string
+          description: Order status
+          maxLength: 20
+          example: "PENDING"
+        total:
+          type: string
+          format: decimal
+          description: Order total amount (BigDecimal)
+          example: "99.99"
+
+    OrderResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Order identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        customerId:
+          type: string
+          description: Customer identifier
+          example: "CUST123"
+        status:
+          type: string
+          description: Order status
+          example: "PENDING"
+        total:
+          type: string
+          format: decimal
+          description: Order total amount (BigDecimal)
+          example: "99.99"
