@@ -1,8 +1,0 @@
-GRPC localhost:9001/PaymentService/CreatePayment
-
-{
-  "order_id": "order_12345",
-  "amount": 100.0,
-  "currency": "USD",
-  "payment_method": "credit_card"
-}
