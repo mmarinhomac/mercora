@@ -1,6 +1,9 @@
 package com.mercora.orderservice.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
@@ -8,14 +11,16 @@ public class OrderRequestDTO {
   @NotBlank(message = "customerId is required")
   private String customerId;
 
-  @NotBlank(message = "status is required")
-  @Size(max = 20, message = "status must be less than 20 characters")
-  private String status;
-
   @NotNull
-  @DecimalMin(value = "0.01", message = "total must be greater than 0")
-  @Positive(message = "total must be positive")
-  private BigDecimal total;
+  @DecimalMin(value = "0.01", message = "amount must be greater than 0")
+  private BigDecimal amount;
+
+  @NotBlank(message = "currency is required")
+  @Size(max = 3, message = "currency must be 3 characters")
+  private String currency;
+
+  @NotBlank(message = "paymentMethod is required")
+  private String paymentMethod;
 
   public String getCustomerId() {
     return customerId;
@@ -25,19 +30,27 @@ public class OrderRequestDTO {
     this.customerId = customerId;
   }
 
-  public String getStatus() {
-    return status;
+  public BigDecimal getAmount() {
+    return amount;
   }
 
-  public void setStatus(String status) {
-    this.status = status;
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
   }
 
-  public BigDecimal getTotal() {
-    return total;
+  public String getCurrency() {
+    return currency;
   }
 
-  public void setTotal(BigDecimal total) {
-    this.total = total;
+  public void setCurrency(String currency) {
+    this.currency = currency;
+  }
+
+  public String getPaymentMethod() {
+    return paymentMethod;
+  }
+
+  public void setPaymentMethod(String paymentMethod) {
+    this.paymentMethod = paymentMethod;
   }
 }

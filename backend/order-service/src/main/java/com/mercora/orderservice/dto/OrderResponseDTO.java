@@ -1,27 +1,17 @@
 package com.mercora.orderservice.dto;
 
-import java.math.BigDecimal;
-
 public class OrderResponseDTO {
-  private String id;
-  private String customerId;
+
+  private String orderId;
   private String status;
-  private BigDecimal total;
+  private String paymentId;
 
-  public String getId() {
-    return id;
+  public String getOrderId() {
+    return orderId;
   }
 
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getCustomerId() {
-    return customerId;
-  }
-
-  public void setCustomerId(String customerId) {
-    this.customerId = customerId;
+  public void setOrderId(String orderId) {
+    this.orderId = orderId;
   }
 
   public String getStatus() {
@@ -32,11 +22,11 @@ public class OrderResponseDTO {
     this.status = status;
   }
 
-  public BigDecimal getTotal() {
-    return total;
+  public String getPaymentId() {
+    return paymentId;
   }
 
-  public void setTotal(BigDecimal total) {
-    this.total = total;
+  public void setPaymentId(String paymentId) {
+    this.paymentId = paymentId;
   }
 }
