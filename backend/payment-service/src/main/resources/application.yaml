@@ -1,3 +1,10 @@
 spring:
   application:
     name: payment-service
+
+server:
+  port: 4001
+
+grpc:
+  server:
+    port: 9001
