@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package order.events;
+option java_multiple_files = true;
+
+message Money {
+  int64 units = 1;
+  int32 nanos = 2;
+  string currency = 3;
+}
+
+message OrderEvent {
+  string order_id = 1;
+  Money amount = 2;
+  string status = 3;
+  string event_type = 4;
+}
