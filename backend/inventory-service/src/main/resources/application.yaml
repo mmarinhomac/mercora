@@ -7,4 +7,4 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
 
 server:
-  port: 4002
+  port: 4003

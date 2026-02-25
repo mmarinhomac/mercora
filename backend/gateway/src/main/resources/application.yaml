@@ -7,18 +7,25 @@ spring:
         webflux:
           routes:
             - id: order-service-route
-              uri: http://order-service:4000
+              uri: http://order-service:4001
               predicates:
                 - Path=/api/orders/**
               filters:
                 - StripPrefix=1
 
+            - id: payment-service-route
+              uri: http://payment-service:4002
+              predicates:
+                - Path=/api/payments/**
+              filters:
+                - StripPrefix=1
+
             - id: inventory-service-route
-              uri: http://inventory-service:4001
+              uri: http://inventory-service:4003
               predicates:
                 - Path=/api/inventory/**
               filters:
                 - StripPrefix=1
 
 server:
-  port: 4004
+  port: 4000
