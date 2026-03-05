@@ -12,6 +12,7 @@ spring:
                 - Path=/api/orders/**
               filters:
                 - StripPrefix=1
+                - JwtValidation
 
             - id: payment-service-route
               uri: http://payment-service:4002
@@ -26,6 +27,13 @@ spring:
                 - Path=/api/inventory/**
               filters:
                 - StripPrefix=1
+
+            - id: auth-service-route
+              uri: http://auth-service:4004
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - StripPrefix=2
 
 server:
   port: 4000
