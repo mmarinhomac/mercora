@@ -1,5 +1,5 @@
 ### Create an order
-POST http://localhost:4000/api/orders
+POST http://localhost:4000/orders
 Content-Type: application/json
 
 {

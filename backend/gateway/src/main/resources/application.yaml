@@ -9,9 +9,8 @@ spring:
             - id: order-service-route
               uri: http://order-service:4001
               predicates:
-                - Path=/api/orders/**
+                - Path=/orders/**
               filters:
-                - StripPrefix=1
                 - JwtValidation
 
             - id: order-service-docs-route
@@ -27,23 +26,19 @@ spring:
             - id: payment-service-route
               uri: http://payment-service:4002
               predicates:
-                - Path=/api/payments/**
-              filters:
-                - StripPrefix=1
+                - Path=/payments/**
 
             - id: inventory-service-route
               uri: http://inventory-service:4003
               predicates:
-                - Path=/api/inventory/**
-              filters:
-                - StripPrefix=1
+                - Path=/inventory/**
 
             - id: auth-service-route
               uri: http://auth-service:4004
               predicates:
-                - Path=/api/auth/**
+                - Path=/auth/**
               filters:
-                - StripPrefix=2
+                - StripPrefix=1
 
 server:
   port: 4000
