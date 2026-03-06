@@ -11,5 +11,5 @@ server:
 
 scalar:
   enabled: true
-  url: /openapi.yaml
-  path: /docs
+  url: /openapi-order-service.yaml
+  path: /api-docs-order-service
