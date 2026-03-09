@@ -349,3 +349,12 @@ This project was developed to demonstrate and master:
 11. **Observability** - Logging, metrics, and health checks in distributed systems
 
 **Built with ☕ and ❤️ using Java, Spring Boot, and modern distributed system patterns.**
+
+## Pending Items
+
+- CloudFormation ✅
+- docker-compose.yml for general deployment ✅
+- Review the Business Flow✅
+- Refine All Services
+- Implement All Services Docs
+- Refine the Architecture Diagram
