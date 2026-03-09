@@ -20,7 +20,7 @@ public class KafkaProducer {
     this.kafkaTemplate = kafkaTemplate;
   }
 
-  public void sendEvent(Order order) {
+  public void sendEvent(Order order, String correlationId) {
     Money money = Money.newBuilder()
             .setUnits(order.getTotalAmount().longValue())
             .setNanos(order.getTotalAmount().remainder(BigDecimal.ONE)
@@ -37,6 +37,7 @@ public class KafkaProducer {
             .setEventType("ORDER_CREATED")
             .setPaymentMethod(order.getPaymentMethod())
             .setReservationId(order.getReservationId() != null ? order.getReservationId().toString() : "")
+            .setCorrelationId(correlationId)
             .build();
 
     try {

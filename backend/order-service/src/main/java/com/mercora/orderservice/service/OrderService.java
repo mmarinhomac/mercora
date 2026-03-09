@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-
 @Service
 public class OrderService {
   private final OrderRepository orderRepository;
@@ -30,6 +29,10 @@ public class OrderService {
   }
 
   public OrderResponseDTO createOrder(OrderRequestDTO request) {
+    String correlationId = (request.getCorrelationId() != null && !request.getCorrelationId().isBlank())
+            ? request.getCorrelationId()
+            : UUID.randomUUID().toString();
+
     Order order = OrderMapper.toModel(request);
     Order saved = orderRepository.save(order);
 
@@ -43,7 +46,7 @@ public class OrderService {
     saved.setStatus(OrderStatus.PAYMENT_PENDING);
     Order persisted = orderRepository.save(saved);
 
-    kafkaProducer.sendEvent(persisted);
+    kafkaProducer.sendEvent(persisted, correlationId);
 
     return OrderMapper.toDTO(persisted);
   }

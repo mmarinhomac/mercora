@@ -16,4 +16,5 @@ message OrderEvent {
   string event_type = 4;
   string payment_method = 5;
   string reservation_id = 6;
+  string correlation_id = 7;
 }

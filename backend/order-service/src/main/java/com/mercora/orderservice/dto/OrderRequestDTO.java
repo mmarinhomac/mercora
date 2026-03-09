@@ -22,6 +22,8 @@ public class OrderRequestDTO {
   @NotBlank(message = "paymentMethod is required")
   private String paymentMethod;
 
+  private String correlationId;
+
   public String getCustomerId() {
     return customerId;
   }
@@ -52,5 +54,13 @@ public class OrderRequestDTO {
 
   public void setPaymentMethod(String paymentMethod) {
     this.paymentMethod = paymentMethod;
+  }
+
+  public String getCorrelationId() {
+    return correlationId;
+  }
+
+  public void setCorrelationId(String correlationId) {
+    this.correlationId = correlationId;
   }
 }
