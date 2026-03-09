@@ -9,6 +9,8 @@ It combines synchronous gRPC calls and asynchronous Kafka events to handle order
 
 ## Architecture
 
+<img alt="archtecture" src="/presentation/arch_diagram.png" width="100%"/>
+
 ### Core services
 
 - **Gateway**: single public entrypoint and auth validation
@@ -74,12 +76,12 @@ Gateway is exposed at `http://localhost:4000`.
 Each service exposes its OpenAPI spec as a static file under `src/main/resources/static/`.
 Once the stack is running, the specs are accessible at:
 
-| Service           | OpenAPI Spec URL                                                    |
-|-------------------|---------------------------------------------------------------------|
-| Auth Service      | http://localhost:4004/openapi-auth-service.yaml                     |
-| Order Service     | http://localhost:4001/openapi-order-service.yaml                    |
-| Payment Service   | http://localhost:4002/openapi-payment-service.yaml                  |
-| Inventory Service | http://localhost:4003/openapi-inventory-service.yaml                |
+| Service           | OpenAPI Spec URL                                     |
+|-------------------|------------------------------------------------------|
+| Auth Service      | http://localhost:4004/openapi-auth-service.yaml      |
+| Order Service     | http://localhost:4001/openapi-order-service.yaml     |
+| Payment Service   | http://localhost:4002/openapi-payment-service.yaml   |
+| Inventory Service | http://localhost:4003/openapi-inventory-service.yaml |
 
 The Order Service also serves an interactive UI (powered by [Scalar](https://scalar.com)) at:
 
@@ -89,6 +91,8 @@ http://localhost:4001/api-docs-order-service
 
 > Payment Service and Inventory Service have no REST endpoints. Their OpenAPI files document
 > Kafka event schemas and gRPC contracts respectively.
+
+<img alt="archtecture" src="/presentation/docs_scalar.png" width="100%"/>
 
 ## Testing status
 
