@@ -69,6 +69,27 @@ docker compose up --build --force-recreate -d
 
 Gateway is exposed at `http://localhost:4000`.
 
+## API Documentation
+
+Each service exposes its OpenAPI spec as a static file under `src/main/resources/static/`.
+Once the stack is running, the specs are accessible at:
+
+| Service           | OpenAPI Spec URL                                                    |
+|-------------------|---------------------------------------------------------------------|
+| Auth Service      | http://localhost:4004/openapi-auth-service.yaml                     |
+| Order Service     | http://localhost:4001/openapi-order-service.yaml                    |
+| Payment Service   | http://localhost:4002/openapi-payment-service.yaml                  |
+| Inventory Service | http://localhost:4003/openapi-inventory-service.yaml                |
+
+The Order Service also serves an interactive UI (powered by [Scalar](https://scalar.com)) at:
+
+```
+http://localhost:4001/api-docs-order-service
+```
+
+> Payment Service and Inventory Service have no REST endpoints. Their OpenAPI files document
+> Kafka event schemas and gRPC contracts respectively.
+
 ## Testing status
 
 Current tested scope in this project is **integration tests only**, under:
