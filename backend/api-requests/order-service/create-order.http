@@ -1,9 +1,10 @@
 ### Create an order
 POST http://localhost:4000/orders
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "customerId": "CUST088",
+  "customerId": "CUST051",
   "amount": 98.50,
   "currency": "USD",
   "paymentMethod": "credit_card"
