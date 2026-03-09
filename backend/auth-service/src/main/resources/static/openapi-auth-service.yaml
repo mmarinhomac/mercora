@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: Auth Service API
+  description: Handles authentication and JWT token validation for the Mercora platform.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:4004
+    description: Local development server
+
+paths:
+  /login:
+    post:
+      operationId: login
+      summary: Authenticate user and return JWT token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDTO'
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDTO'
+        "401":
+          description: Invalid credentials
+
+  /validate:
+    get:
+      operationId: validateToken
+      summary: Validate a JWT token
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token
+          schema:
+            type: string
+            example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      responses:
+        "200":
+          description: Token is valid
+        "401":
+          description: Token is invalid or expired
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequestDTO:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: "user@example.com"
+        password:
+          type: string
+          minLength: 8
+          description: User password
+          example: "password123"
+
+    LoginResponseDTO:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."

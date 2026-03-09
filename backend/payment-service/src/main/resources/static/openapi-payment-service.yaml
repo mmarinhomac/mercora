@@ -1,0 +1,158 @@
+openapi: 3.0.3
+info:
+  title: Payment Service API
+  description: |
+    Handles payment processing for the Mercora platform.
+
+    This service is **event-driven** and communicates exclusively via Apache Kafka.
+    It has no REST endpoints.
+
+    **Kafka Consumer**
+    - Topic: `order`
+    - Group ID: `payment-service-group`
+    - Event: `ORDER_CREATED`
+
+    **Kafka Producer**
+    - Topic: `payment`
+    - Events: `PAYMENT_PROCESSED`, `PAYMENT_FAILED`
+
+    **Processing logic**
+    - On receiving `ORDER_CREATED`, a `Payment` record is created with status `PENDING`.
+    - If `amount == 10.00`, the payment is `REJECTED` and `PAYMENT_FAILED` is published.
+    - Otherwise, the payment is `APPROVED` and `PAYMENT_PROCESSED` is published.
+    - If a payment for the same `orderId` already exists, processing is skipped (idempotency).
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:4002
+    description: Local development server
+
+paths: {}
+
+components:
+  schemas:
+    OrderCreatedEvent:
+      type: object
+      description: Kafka event consumed from the `order` topic (Protobuf-encoded).
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          description: Order identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        amount:
+          $ref: '#/components/schemas/Money'
+        paymentMethod:
+          type: string
+          description: Payment method
+          example: "CREDIT_CARD"
+        correlationId:
+          type: string
+          description: Distributed tracing identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    PaymentProcessedEvent:
+      type: object
+      description: Kafka event produced to the `payment` topic (Protobuf-encoded) on payment approval.
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+          description: Payment identifier
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        orderId:
+          type: string
+          format: uuid
+          description: Related order identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        correlationId:
+          type: string
+          description: Distributed tracing identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    PaymentFailedEvent:
+      type: object
+      description: Kafka event produced to the `payment` topic (Protobuf-encoded) on payment rejection.
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+          description: Payment identifier
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        orderId:
+          type: string
+          format: uuid
+          description: Related order identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        correlationId:
+          type: string
+          description: Distributed tracing identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    Money:
+      type: object
+      description: Monetary amount representation (mirrors Protobuf Money message).
+      properties:
+        units:
+          type: integer
+          format: int64
+          description: Whole units of the currency
+          example: 99
+        nanos:
+          type: integer
+          format: int32
+          description: Fractional units (nanoseconds precision)
+          example: 990000000
+        currency:
+          type: string
+          maxLength: 3
+          description: ISO 4217 currency code
+          example: "USD"
+
+    PaymentStatus:
+      type: string
+      enum:
+        - PENDING
+        - APPROVED
+        - REJECTED
+      description: Current status of the payment
+
+    Payment:
+      type: object
+      description: Payment entity persisted in the database.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Payment identifier
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        orderId:
+          type: string
+          format: uuid
+          description: Related order identifier (unique)
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        amount:
+          type: number
+          format: double
+          description: Payment amount
+          example: 99.99
+        currency:
+          type: string
+          maxLength: 3
+          description: ISO 4217 currency code
+          example: "USD"
+        paymentMethod:
+          type: string
+          description: Payment method
+          example: "CREDIT_CARD"
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: "2024-01-15T10:30:00"

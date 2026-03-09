@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: Inventory Service API
+  description: |
+    Handles stock reservation and confirmation for the Mercora platform.
+
+    This service is **stateless** and communicates exclusively via gRPC and Apache Kafka.
+    It has no REST endpoints.
+
+    **gRPC Server (port 9001)**
+    - Service: `InventoryService`
+    - RPC: `reserve(ReserveRequest) → ReserveResponse`
+    - Called by: `order-service` during order creation to reserve stock.
+
+    **Kafka Consumer**
+    - Topic: `payment`
+    - Event `PAYMENT_PROCESSED`: confirms the reservation and updates stock.
+    - Event `PAYMENT_FAILED`: releases the reservation.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:4003
+    description: Local development server
+
+paths: {}
+
+components:
+  schemas:
+    ReserveRequest:
+      type: object
+      description: gRPC request to reserve inventory for an order.
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          description: Order identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    ReserveResponse:
+      type: object
+      description: gRPC response with the generated reservation identifier.
+      properties:
+        reservationId:
+          type: string
+          format: uuid
+          description: Inventory reservation identifier
+          example: "550e8400-e29b-41d4-a716-446655440002"
+
+    PaymentProcessedEvent:
+      type: object
+      description: Kafka event consumed from the `payment` topic (Protobuf-encoded) to confirm reservation.
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+          description: Payment identifier
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        orderId:
+          type: string
+          format: uuid
+          description: Related order identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        correlationId:
+          type: string
+          description: Distributed tracing identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    PaymentFailedEvent:
+      type: object
+      description: Kafka event consumed from the `payment` topic (Protobuf-encoded) to release reservation.
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+          description: Payment identifier
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        orderId:
+          type: string
+          format: uuid
+          description: Related order identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        correlationId:
+          type: string
+          description: Distributed tracing identifier
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    PaymentStatus:
+      type: string
+      enum:
+        - PENDING
+        - APPROVED
+        - REJECTED
+      description: Status of the payment event
