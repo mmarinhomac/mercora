@@ -6,39 +6,73 @@ spring:
       server:
         webflux:
           routes:
+            # API Gateway route for order-service with JWT validation
             - id: order-service-route
               uri: http://order-service:4001
               predicates:
                 - Path=/orders/**
               filters:
                 - JwtValidation
-
+            # Documentation and OpenAPI routes for order-service
             - id: order-service-docs-route
               uri: http://order-service:4001
               predicates:
                 - Path=/api-docs-order-service/**
-
+            # OpenAPI specification route for order-service
             - id: order-service-openapi-route
               uri: http://order-service:4001
               predicates:
                 - Path=/openapi-order-service.yaml
 
+            # API Gateway route for payment-service with JWT validation
             - id: payment-service-route
               uri: http://payment-service:4002
               predicates:
                 - Path=/payments/**
+            # Documentation and OpenAPI routes for payment-service
+            - id: payment-service-route
+              uri: http://payment-service:4002
+              predicates:
+                - Path=/api-docs-payment-service/**
+            # OpenAPI specification route for payment-service
+            - id: payment-service-openapi-route
+              uri: http://payment-service:4002
+              predicates:
+                - Path=/openapi-payment-service.yaml
 
+            # API Gateway route for inventory-service with JWT validation
             - id: inventory-service-route
               uri: http://inventory-service:4003
               predicates:
                 - Path=/inventory/**
+            # Documentation and OpenAPI routes for inventory-service
+            - id: inventory-service-docs-route
+              uri: http://inventory-service:4003
+              predicates:
+                - Path=/api-docs-inventory-service/**
+            # OpenAPI specification route for inventory-service
+            - id: inventory-service-openapi-route
+              uri: http://inventory-service:4003
+              predicates:
+                - Path=/openapi-inventory-service.yaml
 
+            # API Gateway route for auth-service (no JWT validation needed for auth endpoints)
             - id: auth-service-route
               uri: http://auth-service:4004
               predicates:
                 - Path=/auth/**
               filters:
                 - StripPrefix=1
+            # Documentation and OpenAPI routes for auth-service
+            - id: auth-service-docs-route
+              uri: http://auth-service:4004
+              predicates:
+                - Path=/api-docs-auth-service/**
+            # OpenAPI specification route for auth-service
+            - id: auth-service-openapi-route
+              uri: http://auth-service:4004
+              predicates:
+                - Path=/openapi-auth-service.yaml
 
 server:
   port: 4000

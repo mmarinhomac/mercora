@@ -4,3 +4,8 @@ spring:
 
 server:
   port: 4004
+
+scalar:
+  enabled: true
+  url: /openapi-auth-service.yaml
+  path: /api-docs-auth-service

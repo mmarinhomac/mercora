@@ -95,6 +95,12 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.scalar.maven</groupId>
+            <artifactId>scalar</artifactId>
+            <version>0.1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

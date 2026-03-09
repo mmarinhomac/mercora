@@ -12,3 +12,8 @@ server:
 grpc:
   server:
     port: 9001
+
+scalar:
+  enabled: true
+  url: /openapi-inventory-service.yaml
+  path: /api-docs-inventory-service

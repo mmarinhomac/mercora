@@ -13,3 +13,8 @@ spring:
 
 server:
   port: 4002
+
+scalar:
+  enabled: true
+  url: /openapi-payment-service.yaml
+  path: /api-docs-payment-service
