@@ -1,0 +1,10 @@
+GRPC localhost:9001/inventory.InventoryService/Reserve
+
+{
+  "order_id": "123e4567-e89b-12d3-a456-426614174004",
+  "amount": {
+    "units": 998,
+    "nanos": 500000000,
+    "currency": "USD"
+  }
+}

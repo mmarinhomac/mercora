@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "customerId": "CUST051",
+  "customerId": "CUST052",
   "amount": 98.50,
   "currency": "USD",
   "paymentMethod": "credit_card"
