@@ -15,6 +15,11 @@ services:
       - ./docker/db_volumes/auth-service-db:/var/lib/postgresql
     networks:
       - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d auth-service-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   order-service-db:
     container_name: order-service-db
@@ -29,6 +34,11 @@ services:
       - ./docker/db_volumes/order-service-db:/var/lib/postgresql
     networks:
       - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d order-service-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   payment-service-db:
     container_name: payment-service-db
@@ -43,6 +53,11 @@ services:
       - ./docker/db_volumes/payment-service-db:/var/lib/postgresql
     networks:
       - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d payment-service-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   # ── Kafka (KRaft mode) ───────────────────────────────────────────────────────
 
@@ -84,7 +99,8 @@ services:
     ports:
       - "4004:4004"
     depends_on:
-      - auth-service-db
+      auth-service-db:
+        condition: service_healthy
     networks:
       - internal
 
@@ -107,9 +123,12 @@ services:
     ports:
       - "4001:4001"
     depends_on:
-      - order-service-db
-      - kafka
-      - inventory-service
+      order-service-db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      inventory-service:
+        condition: service_started
     networks:
       - internal
 
@@ -130,8 +149,10 @@ services:
     ports:
       - "4002:4002"
     depends_on:
-      - payment-service-db
-      - kafka
+      payment-service-db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - internal
 
