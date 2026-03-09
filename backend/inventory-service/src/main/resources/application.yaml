@@ -8,3 +8,7 @@ spring:
 
 server:
   port: 4003
+
+grpc:
+  server:
+    port: 9001
