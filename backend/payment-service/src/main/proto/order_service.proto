@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "order.events";
+
+package order.events;
+
+message Money {
+  int64 units = 1;
+  int32 nanos = 2;
+  string currency = 3;
+}
+
+message OrderEvent {
+  string order_id = 1;
+  Money amount = 2;
+  string status = 3;
+  string event_type = 4;
+  string payment_method = 5;
+  string reservation_id = 6;
+  string correlation_id = 7;
+}
