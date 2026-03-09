@@ -81,13 +81,14 @@ Variables are sourced from `docker-compose.yml`.
 
 ### Payment Service
 
-| Variable                        | Value                                                          |
-|---------------------------------|----------------------------------------------------------------|
-| `SPRING_DATASOURCE_URL`         | `jdbc:postgresql://payment-service-db:5432/payment-service-db` |
-| `SPRING_DATASOURCE_USERNAME`    | `admin`                                                        |
-| `SPRING_DATASOURCE_PASSWORD`    | `adminpass`                                                    |
-| `SPRING_JPA_HIBERNATE_DDL_AUTO` | `update`                                                       |
-| `SPRING_SQL_INIT_MODE`          | `always`                                                       |
+| Variable                         | Value                                                          |
+|----------------------------------|----------------------------------------------------------------|
+| `SPRING_DATASOURCE_URL`          | `jdbc:postgresql://payment-service-db:5432/payment-service-db` |
+| `SPRING_DATASOURCE_USERNAME`     | `admin`                                                        |
+| `SPRING_DATASOURCE_PASSWORD`     | `adminpass`                                                    |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO`  | `update`                                                       |
+| `SPRING_SQL_INIT_MODE`           | `always`                                                       |
+| `SPRING_KAFKA_BOOTSTRAP_SERVERS` | `kafka:9092`                                                   |
 
 ### Inventory Service
 
@@ -172,8 +173,18 @@ response.
 
 **Enum: `OrderStatus`** — `CREATED`, `PAYMENT_PENDING`, `PAID`, `FAILED`
 
-**Produces:** `ORDER_CREATED` (topic: `order`)
-**Consumes:** `PAYMENT_PROCESSED`, `PAYMENT_FAILED` (topic: `payment`)
+**Produces:** `ORDER_CREATED` (topic: `order`, Protobuf `byte[]`)
+
+**Event: `ORDER_CREATED`**
+
+| Field           | Type                                              | Description                       |
+|-----------------|---------------------------------------------------|-----------------------------------|
+| `orderId`       | `string`                                          | Order identifier                  |
+| `amount`        | `Money` (`units`: int64, `nanos`: int32, `currency`: string) | Order total          |
+| `paymentMethod` | `string`                                          | Payment method                    |
+| `correlationId` | `string`                                          | Distributed tracing identifier    |
+
+**Consumes:** `PAYMENT_PROCESSED`, `PAYMENT_FAILED` (topic: `payment`, Protobuf `byte[]`)
 
 ---
 
@@ -181,15 +192,49 @@ response.
 
 Handles payment processing. Communicates with order-service via Kafka only — no gRPC.
 
-**Consumes:** `ORDER_CREATED` (topic: `order`)
-**Produces:** `PAYMENT_PROCESSED`, `PAYMENT_FAILED` (topic: `payment`)
+**Consumer group:** `payment-service-group`
+
+**Consumes:** `ORDER_CREATED` (topic: `order`, Protobuf `byte[]`)
+
+**Event: `ORDER_CREATED`** (minimal fields consumed)
+
+| Field           | Type                                                          | Description                    |
+|-----------------|---------------------------------------------------------------|--------------------------------|
+| `orderId`       | `string`                                                      | Order identifier               |
+| `amount`        | `Money` (`units`: int64, `nanos`: int32, `currency`: string)  | Order total                    |
+| `paymentMethod` | `string`                                                      | Payment method                 |
+| `correlationId` | `string`                                                      | Distributed tracing identifier |
+
+**Produces:** `PAYMENT_PROCESSED` or `PAYMENT_FAILED` (topic: `payment`, Protobuf `byte[]`)
+
+**Event: `PAYMENT_PROCESSED` / `PAYMENT_FAILED`** (minimal fields produced)
+
+| Field           | Type                                 | Description                    |
+|-----------------|--------------------------------------|--------------------------------|
+| `paymentId`     | `string`                             | Payment identifier             |
+| `orderId`       | `string`                             | Related order identifier       |
+| `status`        | `PaymentStatus` (APPROVED/REJECTED)  | Payment result                 |
+| `correlationId` | `string`                             | Distributed tracing identifier |
+
+**Processing logic:**
+
+- On receiving `ORDER_CREATED`, the service creates a `Payment` record with status `PENDING`.
+- If `amount == 10.00`, the payment is `REJECTED` and a `PAYMENT_FAILED` event is published.
+- Otherwise, the payment is `APPROVED` and a `PAYMENT_PROCESSED` event is published.
+- `correlationId` is read from the incoming event body and propagated to the outgoing event body.
+
+**Idempotency strategy:**
+
+- The `orderId` is used as the unique identifier for each payment request.
+- Before processing, the service checks whether a `Payment` record for that `orderId` already exists in the database.
+- If it does, processing is skipped and the previous result is logged.
 
 **Model: `Payment`**
 
 | Field           | Type            | Constraints                    |
 |-----------------|-----------------|--------------------------------|
 | `id`            | `UUID`          | PK, auto-generated             |
-| `orderId`       | `String`        | not null                       |
+| `orderId`       | `String`        | not null, unique               |
 | `amount`        | `BigDecimal`    | not null, precision 19 scale 4 |
 | `currency`      | `String`        | not null, 3 chars              |
 | `paymentMethod` | `String`        | not null                       |
