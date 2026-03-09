@@ -14,4 +14,6 @@ message OrderEvent {
   Money amount = 2;
   string status = 3;
   string event_type = 4;
+  string payment_method = 5;
+  string reservation_id = 6;
 }

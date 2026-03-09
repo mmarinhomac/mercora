@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "inventory";
+
+package inventory;
+
+message Money {
+  int64 units = 1;
+  int32 nanos = 2;
+  string currency = 3;
+}
+
+message ReserveRequest {
+  string order_id = 1;
+  Money amount = 2;
+}
+
+message ReserveResponse {
+  string reservation_id = 1;
+}
+
+service InventoryService {
+  rpc Reserve(ReserveRequest) returns (ReserveResponse);
+}

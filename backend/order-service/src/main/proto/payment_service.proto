@@ -11,25 +11,10 @@ enum PaymentStatus {
   REJECTED = 2;
 }
 
-message Money {
-  int64 units = 1;
-  int32 nanos = 2;
-  string currency = 3;
-}
-
-message PaymentRequest {
-  string order_id = 1;
-  Money amount = 2;
-  string payment_method = 3;
-}
-
 message PaymentResponse {
   string payment_id = 1;
   string order_id = 2;
   PaymentStatus status = 3;
   string message = 4;
-}
-
-service PaymentService {
-  rpc ProcessPayment (PaymentRequest) returns (PaymentResponse);
+  string correlation_id = 5;
 }

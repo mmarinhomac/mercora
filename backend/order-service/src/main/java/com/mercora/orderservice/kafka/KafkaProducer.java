@@ -35,6 +35,8 @@ public class KafkaProducer {
             .setAmount(money)
             .setStatus(order.getStatus().name())
             .setEventType("ORDER_CREATED")
+            .setPaymentMethod(order.getPaymentMethod())
+            .setReservationId(order.getReservationId() != null ? order.getReservationId().toString() : "")
             .build();
 
     try {

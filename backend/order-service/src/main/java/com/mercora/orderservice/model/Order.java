@@ -40,6 +40,9 @@ public class Order {
   @Column
   private UUID paymentId;
 
+  @Column
+  private UUID reservationId;
+
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
@@ -102,6 +105,14 @@ public class Order {
 
   public void setPaymentId(UUID paymentId) {
     this.paymentId = paymentId;
+  }
+
+  public UUID getReservationId() {
+    return reservationId;
+  }
+
+  public void setReservationId(UUID reservationId) {
+    this.reservationId = reservationId;
   }
 
   public LocalDateTime getCreatedAt() {

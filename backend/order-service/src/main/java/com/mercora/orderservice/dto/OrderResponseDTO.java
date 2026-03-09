@@ -5,6 +5,7 @@ public class OrderResponseDTO {
   private String orderId;
   private String status;
   private String paymentId;
+  private String reservationId;
 
   public String getOrderId() {
     return orderId;
@@ -28,5 +29,13 @@ public class OrderResponseDTO {
 
   public void setPaymentId(String paymentId) {
     this.paymentId = paymentId;
+  }
+
+  public String getReservationId() {
+    return reservationId;
+  }
+
+  public void setReservationId(String reservationId) {
+    this.reservationId = reservationId;
   }
 }

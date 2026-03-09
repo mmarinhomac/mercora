@@ -16,6 +16,7 @@ public class OrderMapper {
     dto.setOrderId(order.getId().toString());
     dto.setStatus(order.getStatus().name());
     dto.setPaymentId(order.getPaymentId() != null ? order.getPaymentId().toString() : null);
+    dto.setReservationId(order.getReservationId() != null ? order.getReservationId().toString() : null);
     return dto;
   }
 
